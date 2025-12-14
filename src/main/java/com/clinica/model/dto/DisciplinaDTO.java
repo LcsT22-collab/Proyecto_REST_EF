@@ -1,47 +1,41 @@
 package com.clinica.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Objeto de Transferencia de Datos para Disciplinas")
+@Schema(description = "DTO para la gestión de disciplinas")
 public class DisciplinaDTO {
-
-    @Schema(description = "ID único de la disciplina", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    
+    @Schema(description = "ID de la disciplina", example = "1")
     private Long idDisciplina;
     
-    @Schema(description = "Nombre de la disciplina", example = "Psicología Clínica", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Nombre de la disciplina", example = "Fisioterapia", required = true)
     private String nombre;
     
-    @Schema(description = "Descripción detallada", example = "Evaluación y tratamiento de trastornos psicológicos")
+    @Schema(description = "Descripción", example = "Terapia física para rehabilitación")
     private String descripcion;
     
-    @Schema(description = "Estado de la disciplina", 
-             example = "ACTIVA", 
-             allowableValues = {"ACTIVA", "INACTIVA", "EN_REVISION", "DESCONTINUADA"})
+    @Schema(description = "Estado", example = "ACTIVA")
     private String estado;
     
-    @Schema(description = "Código único de la disciplina", example = "PSC")
+    @Schema(description = "Código único", example = "FIS")
     private String codigo;
     
-    @Schema(description = "Color representativo (hexadecimal)", example = "#4A90E2")
+    @Schema(description = "Color en hexadecimal", example = "#FF5733")
     private String color;
     
-    @Schema(description = "Cantidad de terapeutas asociados", example = "5", accessMode = Schema.AccessMode.READ_ONLY)
-    private int terapeutasAsociados;
-    
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Schema(description = "Fecha de creación", example = "2024-01-15 10:30:00", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Fecha de creación")
     private LocalDateTime fechaCreacion;
     
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Schema(description = "Fecha de última actualización", example = "2024-01-20 14:45:00", accessMode = Schema.AccessMode.READ_ONLY)
-    private LocalDateTime fechaActualizacion;
+    @Schema(description = "Número de terapeutas asociados")
+    private Integer terapeutasAsociados;
 }

@@ -1,56 +1,58 @@
 package com.clinica.model.entity;
 
-
-import java.time.LocalDateTime;
-
-import com.clinica.model.enums.EstadoCita;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name="citas")
+@Table(name = "citas")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class CitasEntity {
-	
-	@Id
+    
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_cita")
+    @Column(name = "id_cita")
     private Long idCita;
-
+    
     @ManyToOne
-    @JoinColumn(name="id_paciente")
+    @JoinColumn(name = "id_paciente", nullable = false)
     private PacientesEntity paciente;
-
-
+    
     @ManyToOne
-    @JoinColumn(name="id_terapeuta")
+    @JoinColumn(name = "id_terapeuta", nullable = false)
     private TerapeutaEntity terapeuta;
-
-
-    @Column(name="fecha_cita")
+    
+    @Column(name = "fecha_cita", nullable = false)
     private LocalDateTime fechaCita;
-
-
-    @Enumerated(EnumType.STRING)
-    @Column(name="estado_cita")
-    private EstadoCita estadoCita;
-
+    
+    @Column(name = "duracion_minutos")
+    private Integer duracionMinutos = 60;
+    
+    @Column(name = "estado_cita", nullable = false)
+    private String estadoCita = "PROGRAMADA";
+    
+    @Column(name = "observaciones", length = 500)
+    private String observaciones;
+    
+    @Column(name = "fecha_creacion", nullable = false)
+    private LocalDateTime fechaCreacion;
+    
+    @Column(name = "fecha_actualizacion")
+    private LocalDateTime fechaActualizacion;
+    
+    @PrePersist
+    protected void onCreate() {
+        fechaCreacion = LocalDateTime.now();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        fechaActualizacion = LocalDateTime.now();
+    }
 }

@@ -1,121 +1,126 @@
 package com.clinica.controller;
 
-import java.util.List;
-
+import com.clinica.model.dto.EvaluacionDTO;
+import com.clinica.model.entity.EvaluacionesEntity;
+import com.clinica.model.entity.PacientesEntity;
+import com.clinica.service.EvaluacionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.clinica.model.dto.EvaluacionDTO;
-import com.clinica.model.entity.EvaluacionesEntity;
-import com.clinica.model.entity.PacientesEntity;
-import com.clinica.service.EvaluacionService;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1")
-@Tag(name = "Evaluaciones", description = "Operaciones CRUD para la gestión de evaluaciones médicas")
+@RequestMapping("/api/v1/evaluaciones")
+@Tag(name = "Evaluaciones", description = "Gestión de evaluaciones médicas")
 public class EvaluacionController {
 
-    @Autowired
-    private EvaluacionService evaluacionService;
+    private final EvaluacionService evaluacionService;
 
-    @GetMapping("/listar/evaluaciones")
-    @Operation(summary = "Listar todas las evaluaciones", description = "Obtiene una lista completa de todas las evaluaciones registradas")
-    @ApiResponse(responseCode = "200", description = "Lista de evaluaciones obtenida exitosamente")
-    public List<EvaluacionDTO> listarEvaluaciones() {
-        List<EvaluacionesEntity> evaluaciones = evaluacionService.findAll();
-        return evaluaciones.stream()
-                .map(this::convertirADto)
-                .toList();
+    public EvaluacionController(EvaluacionService evaluacionService) {
+        this.evaluacionService = evaluacionService;
     }
 
-    @GetMapping("/evaluacion/{id}")
-    @Operation(summary = "Obtener evaluación por ID", description = "Busca una evaluación específica por su identificador único")
+    @GetMapping
+    @Operation(summary = "Listar todas las evaluaciones", description = "Obtiene la lista completa de evaluaciones")
+    @ApiResponse(responseCode = "200", description = "Lista de evaluaciones obtenida exitosamente")
+    public ResponseEntity<List<EvaluacionDTO>> getAllEvaluaciones() {
+        List<EvaluacionDTO> evaluaciones = evaluacionService.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(evaluaciones);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtener evaluación por ID", description = "Busca una evaluación específica por su identificador")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Evaluación encontrada exitosamente"),
+            @ApiResponse(responseCode = "200", description = "Evaluación encontrada"),
             @ApiResponse(responseCode = "404", description = "Evaluación no encontrada")
     })
-    public ResponseEntity<EvaluacionDTO> obtenerEvaluacion(
-            @Parameter(description = "ID de la evaluación", example = "1", required = true) @PathVariable Long id) {
+    public ResponseEntity<EvaluacionDTO> getEvaluacionById(
+            @Parameter(description = "ID de la evaluación", required = true) @PathVariable Long id) {
         return evaluacionService.findById(id)
-                .map(evaluacion -> ResponseEntity.ok(convertirADto(evaluacion)))
+                .map(evaluacion -> ResponseEntity.ok(convertToDTO(evaluacion)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/evaluacion")
-    @Operation(summary = "Crear nueva evaluación", description = "Registra una nueva evaluación médica")
+    @PostMapping
+    @Operation(summary = "Crear nueva evaluación", description = "Crea una nueva evaluación médica")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Evaluación creada exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos de la evaluación inválidos")
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
-    public ResponseEntity<EvaluacionDTO> crearEvaluacion(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos de la evaluación a crear", required = true) @RequestBody EvaluacionDTO evaluacionDTO) {
-        EvaluacionesEntity evaluacion = convertirAEntidad(evaluacionDTO);
-        EvaluacionesEntity nuevaEvaluacion = evaluacionService.save(evaluacion);
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertirADto(nuevaEvaluacion));
+    public ResponseEntity<EvaluacionDTO> createEvaluacion(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos de la evaluación", required = true)
+            @RequestBody EvaluacionDTO evaluacionDTO) {
+        EvaluacionesEntity evaluacion = convertToEntity(evaluacionDTO);
+        EvaluacionesEntity savedEvaluacion = evaluacionService.save(evaluacion);
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedEvaluacion));
     }
 
-    @PutMapping("/editar/evaluacion/{id}")
-    @Operation(summary = "Actualizar evaluación", description = "Actualiza la información de una evaluación existente")
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar evaluación", description = "Actualiza los datos de una evaluación existente")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Evaluación actualizada exitosamente"),
+            @ApiResponse(responseCode = "200", description = "Evaluación actualizada"),
             @ApiResponse(responseCode = "404", description = "Evaluación no encontrada"),
-            @ApiResponse(responseCode = "400", description = "Datos de actualización inválidos")
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
-    public ResponseEntity<EvaluacionDTO> actualizarEvaluacion(
-            @Parameter(description = "ID de la evaluación a actualizar", example = "1", required = true) @PathVariable Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nuevos datos de la evaluación", required = true) @RequestBody EvaluacionDTO evaluacionDTO) {
-        EvaluacionesEntity evaluacion = convertirAEntidad(evaluacionDTO);
-        EvaluacionesEntity evaluacionActualizada = evaluacionService.update(id, evaluacion);
-        return ResponseEntity.ok(convertirADto(evaluacionActualizada));
+    public ResponseEntity<EvaluacionDTO> updateEvaluacion(
+            @Parameter(description = "ID de la evaluación", required = true) @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nuevos datos de la evaluación", required = true)
+            @RequestBody EvaluacionDTO evaluacionDTO) {
+        EvaluacionesEntity evaluacion = convertToEntity(evaluacionDTO);
+        EvaluacionesEntity updatedEvaluacion = evaluacionService.update(id, evaluacion);
+        return ResponseEntity.ok(convertToDTO(updatedEvaluacion));
     }
 
-    @DeleteMapping("/eliminar/evaluacion/{id}")
-    @Operation(summary = "Eliminar evaluación", description = "Elimina una evaluación del sistema por su ID")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar evaluación", description = "Elimina una evaluación del sistema")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Evaluación eliminada exitosamente"),
+            @ApiResponse(responseCode = "204", description = "Evaluación eliminada"),
             @ApiResponse(responseCode = "404", description = "Evaluación no encontrada")
     })
-    public ResponseEntity<Void> eliminarEvaluacion(
-            @Parameter(description = "ID de la evaluación a eliminar", example = "1", required = true) @PathVariable Long id) {
+    public ResponseEntity<Void> deleteEvaluacion(
+            @Parameter(description = "ID de la evaluación", required = true) @PathVariable Long id) {
         evaluacionService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    private EvaluacionDTO convertirADto(EvaluacionesEntity evaluacion) {
+    private EvaluacionDTO convertToDTO(EvaluacionesEntity evaluacion) {
         EvaluacionDTO dto = new EvaluacionDTO();
         dto.setIdEvaluaciones(evaluacion.getIdEvaluaciones());
         dto.setFechaEvaluacion(evaluacion.getFechaEvaluacion());
         dto.setTipoEvaluacion(evaluacion.getTipoEvaluacion());
         dto.setResultado(evaluacion.getResultado());
-
+        dto.setRecomendaciones(evaluacion.getRecomendaciones());
+        
         if (evaluacion.getPaciente() != null) {
-            dto.setIdPaciente(evaluacion.getPaciente().getIdPaciente());
+            dto.setPacienteId(evaluacion.getPaciente().getIdPaciente());
             dto.setNombrePaciente(evaluacion.getPaciente().getNombre());
         }
-
+        
         return dto;
     }
 
-    private EvaluacionesEntity convertirAEntidad(EvaluacionDTO dto) {
+    private EvaluacionesEntity convertToEntity(EvaluacionDTO dto) {
         EvaluacionesEntity evaluacion = new EvaluacionesEntity();
         evaluacion.setFechaEvaluacion(dto.getFechaEvaluacion());
         evaluacion.setTipoEvaluacion(dto.getTipoEvaluacion());
         evaluacion.setResultado(dto.getResultado());
-
-        if (dto.getIdPaciente() != null) {
+        evaluacion.setRecomendaciones(dto.getRecomendaciones());
+        
+        if (dto.getPacienteId() != null) {
             PacientesEntity paciente = new PacientesEntity();
-            paciente.setIdPaciente(dto.getIdPaciente());
+            paciente.setIdPaciente(dto.getPacienteId());
             evaluacion.setPaciente(paciente);
         }
-
+        
         return evaluacion;
     }
 }

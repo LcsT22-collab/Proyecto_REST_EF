@@ -1,39 +1,44 @@
 package com.clinica.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Objeto de Transferencia de Datos para Pacientes")
+@Schema(description = "DTO para la gestión de pacientes")
 public class PacienteDTO {
-
-    @Schema(description = "ID único del paciente", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    
+    @Schema(description = "ID del paciente", example = "1")
     private Long idPaciente;
     
-    @Schema(description = "Nombre completo del paciente", example = "Juan Pérez", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Nombre completo", example = "Juan Pérez", required = true)
     private String nombre;
     
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Schema(description = "Fecha de nacimiento del paciente", example = "1990-05-15", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Fecha de nacimiento", example = "1990-05-15", required = true)
     private LocalDate fechaNacimiento;
     
-    @Schema(description = "Nombre del tutor (para pacientes menores)", example = "María López")
+    @Schema(description = "Nombre del tutor", example = "María Pérez")
     private String nombreTutor;
     
-    @Schema(description = "Número de teléfono de contacto", example = "+1234567890")
+    @Schema(description = "Teléfono", example = "+1234567890")
     private String telefono;
     
-    @Schema(description = "Correo electrónico del paciente", example = "juan.perez@email.com")
+    @Schema(description = "Correo electrónico", example = "juan@email.com")
     private String correo;
     
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Schema(description = "Fecha de registro en el sistema", example = "2024-01-15", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Dirección", example = "Calle Principal 123")
+    private String direccion;
+    
+    @Schema(description = "Fecha de registro")
     private LocalDate fechaRegistro;
+    
+    @Schema(description = "Activo", example = "true")
+    private Boolean activo;
 }

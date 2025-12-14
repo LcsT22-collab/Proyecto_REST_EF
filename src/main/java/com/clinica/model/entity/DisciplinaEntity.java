@@ -1,6 +1,5 @@
 package com.clinica.model.entity;
 
-import com.clinica.model.enums.EstadoDisciplina;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.ToString;
 
 @Entity
 @Table(name = "disciplinas")
@@ -17,7 +15,6 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString   
 public class DisciplinaEntity {
     
     @Id
@@ -31,11 +28,16 @@ public class DisciplinaEntity {
     @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
     
-    @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
-    private EstadoDisciplina estado = EstadoDisciplina.ACTIVA;
+    private String estado = "ACTIVA";
     
-    @OneToMany(mappedBy = "disciplina", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Column(name = "codigo", unique = true, length = 20)
+    private String codigo;
+    
+    @Column(name = "color", length = 7)
+    private String color;
+    
+    @OneToMany(mappedBy = "disciplina", fetch = FetchType.LAZY)
     private List<TerapeutaEntity> terapeutas = new ArrayList<>();
     
     @Column(name = "fecha_creacion", nullable = false)
@@ -44,17 +46,10 @@ public class DisciplinaEntity {
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
     
-    @Column(name = "codigo", unique = true, length = 20)
-    private String codigo;
-    
-    @Column(name = "color", length = 7)
-    private String color; // Código hexadecimal del color
-    
     @PrePersist
     protected void onCreate() {
         fechaCreacion = LocalDateTime.now();
         if (codigo == null || codigo.isEmpty()) {
-            // Generar código automático: primeros 3 caracteres del nombre en mayúsculas
             codigo = nombre.length() >= 3 
                 ? nombre.substring(0, 3).toUpperCase() 
                 : nombre.toUpperCase();

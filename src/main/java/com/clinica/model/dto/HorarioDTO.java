@@ -1,48 +1,38 @@
 package com.clinica.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Objeto de Transferencia de Datos para Horarios")
+@Schema(description = "DTO para la gestión de horarios")
 public class HorarioDTO {
-
-    @Schema(description = "ID único del horario", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    
+    @Schema(description = "ID del horario", example = "1")
     private Long idHorario;
-
-    @Schema(description = "Día de la semana", example = "LUNES", requiredMode = Schema.RequiredMode.REQUIRED)
+    
+    @Schema(description = "ID del terapeuta", example = "1")
+    private Long terapeutaId;
+    
+    @Schema(description = "Nombre del terapeuta", example = "Dra. María López")
+    private String nombreTerapeuta;
+    
+    @Schema(description = "Día de la semana", example = "LUNES", required = true)
     private String diaSemana;
-
-    @JsonFormat(pattern = "HH:mm:ss")
-    @Schema(description = "Hora de inicio", example = "08:00:00", requiredMode = Schema.RequiredMode.REQUIRED)
+    
+    @Schema(description = "Hora de inicio", example = "08:00:00", required = true)
     private LocalTime horaInicio;
-
-    @JsonFormat(pattern = "HH:mm:ss")
-    @Schema(description = "Hora de fin", example = "17:00:00", requiredMode = Schema.RequiredMode.REQUIRED)
+    
+    @Schema(description = "Hora de fin", example = "12:00:00", required = true)
     private LocalTime horaFin;
-
-    @Schema(description = "Tipo de horario", example = "LABORAL")
-    private String tipo;
-
-    @Schema(description = "Indica si el horario está activo", example = "true")
+    
+    @Schema(description = "Activo", example = "true")
     private Boolean activo;
-
-    @Schema(description = "Descripción del horario", example = "Horario regular de atención")
-    private String descripcion;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Schema(description = "Fecha de creación", example = "2024-01-15 10:30:00", accessMode = Schema.AccessMode.READ_ONLY)
-    private LocalDateTime fechaCreacion;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Schema(description = "Fecha de última actualización", example = "2024-01-20 14:45:00", accessMode = Schema.AccessMode.READ_ONLY)
-    private LocalDateTime fechaActualizacion;
 }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Estados de disponibilidad de los terapeutas")
 public enum DisponibilidadTerapeuta {
+    
     @Schema(description = "Disponible para nuevas citas")
     DISPONIBLE,
     

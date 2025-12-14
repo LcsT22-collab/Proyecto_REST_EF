@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Estados posibles de una cita")
 public enum EstadoCita {
+    
     @Schema(description = "Cita programada pero no confirmada")
     PROGRAMADA,
     
@@ -19,9 +20,9 @@ public enum EstadoCita {
     @Schema(description = "Cita cancelada")
     CANCELADA,
     
-    @Schema(description = "Cita reprogramada para otra fecha")
-    REPROGRAMADA,
-    
     @Schema(description = "Paciente no se presentó a la cita")
-    AUSENTE
+    AUSENTE,
+    
+    @Schema(description = "Cita reprogramada para otra fecha")
+    REPROGRAMADA
 }

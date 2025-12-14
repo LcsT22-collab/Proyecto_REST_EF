@@ -1,48 +1,52 @@
 package com.clinica.model.entity;
 
-import java.time.LocalDate;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+import java.time.LocalDate;
 
 @Entity
-@Table(name="evaluaciones")
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "evaluaciones")
 @Getter
 @Setter
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class EvaluacionesEntity {
-
-	@Id
+    
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id_evaluaciones")
+    @Column(name = "id_evaluaciones")
     private Long idEvaluaciones;
-
+    
     @ManyToOne
-    @JoinColumn(name="id_paciente")
+    @JoinColumn(name = "id_paciente", nullable = false)
     private PacientesEntity paciente;
-
-    @Column(name="fecha_evaluacion")
+    
+    @Column(name = "fecha_evaluacion", nullable = false)
     private LocalDate fechaEvaluacion;
-
-    @Column(name="tipo_evaluacion")
+    
+    @Column(name = "tipo_evaluacion", nullable = false, length = 100)
     private String tipoEvaluacion;
-
+    
     @Lob
-    @Column(name="resultado", columnDefinition = "TEXT")
+    @Column(name = "resultado", columnDefinition = "TEXT")
     private String resultado;
     
+    @Column(name = "recomendaciones", columnDefinition = "TEXT")
+    private String recomendaciones;
+    
+    @Column(name = "fecha_creacion", nullable = false)
+    private LocalDate fechaCreacion;
+    
+    @PrePersist
+    protected void onCreate() {
+        if (fechaCreacion == null) {
+            fechaCreacion = LocalDate.now();
+        }
+        if (fechaEvaluacion == null) {
+            fechaEvaluacion = LocalDate.now();
+        }
+    }
 }

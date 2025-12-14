@@ -1,138 +1,133 @@
 package com.clinica.controller;
 
-import java.util.List;
-
+import com.clinica.model.dto.TerapeutaDTO;
+import com.clinica.model.entity.DisciplinaEntity;
+import com.clinica.model.entity.TerapeutaEntity;
+import com.clinica.service.TerapeutaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.clinica.model.dto.TerapeutaDTO;
-import com.clinica.model.entity.DisciplinaEntity;
-import com.clinica.model.entity.TerapeutaEntity;
-import com.clinica.model.enums.DisponibilidadTerapeuta;
-import com.clinica.service.TerapeutaService;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1")
-@Tag(name = "Terapeutas", description = "Operaciones CRUD para la gestión de terapeutas")
+@RequestMapping("/api/v1/terapeutas")
+@Tag(name = "Terapeutas", description = "Gestión de terapeutas")
 public class TerapeutaController {
 
-    @Autowired
-    private TerapeutaService terapeutaService;
+    private final TerapeutaService terapeutaService;
 
-    @GetMapping("/listar/terapeutas")
-    @Operation(summary = "Listar todos los terapeutas", description = "Obtiene una lista completa de todos los terapeutas registrados")
-    @ApiResponse(responseCode = "200", description = "Lista de terapeutas obtenida exitosamente")
-    public List<TerapeutaDTO> listarTerapeutas() {
-        List<TerapeutaEntity> terapeutas = terapeutaService.findAll();
-        return terapeutas.stream()
-                .map(this::convertirADto)
-                .toList();
+    public TerapeutaController(TerapeutaService terapeutaService) {
+        this.terapeutaService = terapeutaService;
     }
 
-    @GetMapping("/terapeuta/{id}")
-    @Operation(summary = "Obtener terapeuta por ID", description = "Busca un terapeuta específico por su identificador único")
+    @GetMapping
+    @Operation(summary = "Listar todos los terapeutas", description = "Obtiene la lista completa de terapeutas")
+    @ApiResponse(responseCode = "200", description = "Lista de terapeutas obtenida exitosamente")
+    public ResponseEntity<List<TerapeutaDTO>> getAllTerapeutas() {
+        List<TerapeutaDTO> terapeutas = terapeutaService.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(terapeutas);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtener terapeuta por ID", description = "Busca un terapeuta específico por su identificador")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Terapeuta encontrado exitosamente"),
+            @ApiResponse(responseCode = "200", description = "Terapeuta encontrado"),
             @ApiResponse(responseCode = "404", description = "Terapeuta no encontrado")
     })
-    public ResponseEntity<TerapeutaDTO> obtenerTerapeuta(
-            @Parameter(description = "ID del terapeuta", example = "1", required = true) @PathVariable Long id) {
+    public ResponseEntity<TerapeutaDTO> getTerapeutaById(
+            @Parameter(description = "ID del terapeuta", required = true) @PathVariable Long id) {
         return terapeutaService.findById(id)
-                .map(terapeuta -> ResponseEntity.ok(convertirADto(terapeuta)))
+                .map(terapeuta -> ResponseEntity.ok(convertToDTO(terapeuta)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/terapeuta")
-    @Operation(summary = "Crear nuevo terapeuta", description = "Registra un nuevo terapeuta en el sistema")
+    @PostMapping
+    @Operation(summary = "Crear nuevo terapeuta", description = "Crea un nuevo registro de terapeuta")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Terapeuta creado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos del terapeuta inválidos")
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
-    public ResponseEntity<TerapeutaDTO> crearTerapeuta(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del terapeuta a crear", required = true) @RequestBody TerapeutaDTO terapeutaDTO) {
-        TerapeutaEntity terapeuta = convertirAEntidad(terapeutaDTO);
-        TerapeutaEntity nuevoTerapeuta = terapeutaService.save(terapeuta);
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertirADto(nuevoTerapeuta));
+    public ResponseEntity<TerapeutaDTO> createTerapeuta(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del terapeuta", required = true)
+            @RequestBody TerapeutaDTO terapeutaDTO) {
+        TerapeutaEntity terapeuta = convertToEntity(terapeutaDTO);
+        TerapeutaEntity savedTerapeuta = terapeutaService.save(terapeuta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedTerapeuta));
     }
 
-    @PutMapping("/editar/terapeuta/{id}")
-    @Operation(summary = "Actualizar terapeuta", description = "Actualiza la información de un terapeuta existente")
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar terapeuta", description = "Actualiza los datos de un terapeuta existente")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Terapeuta actualizado exitosamente"),
+            @ApiResponse(responseCode = "200", description = "Terapeuta actualizado"),
             @ApiResponse(responseCode = "404", description = "Terapeuta no encontrado"),
-            @ApiResponse(responseCode = "400", description = "Datos de actualización inválidos")
+            @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
-    public ResponseEntity<TerapeutaDTO> actualizarTerapeuta(
-            @Parameter(description = "ID del terapeuta a actualizar", example = "1", required = true) @PathVariable Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nuevos datos del terapeuta", required = true) @RequestBody TerapeutaDTO terapeutaDTO) {
-        TerapeutaEntity terapeuta = convertirAEntidad(terapeutaDTO);
-        TerapeutaEntity terapeutaActualizado = terapeutaService.update(id, terapeuta);
-        return ResponseEntity.ok(convertirADto(terapeutaActualizado));
+    public ResponseEntity<TerapeutaDTO> updateTerapeuta(
+            @Parameter(description = "ID del terapeuta", required = true) @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nuevos datos del terapeuta", required = true)
+            @RequestBody TerapeutaDTO terapeutaDTO) {
+        TerapeutaEntity terapeuta = convertToEntity(terapeutaDTO);
+        TerapeutaEntity updatedTerapeuta = terapeutaService.update(id, terapeuta);
+        return ResponseEntity.ok(convertToDTO(updatedTerapeuta));
     }
 
-    @DeleteMapping("/eliminar/terapeuta/{id}")
-    @Operation(summary = "Eliminar terapeuta", description = "Elimina un terapeuta del sistema por su ID")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Desactivar terapeuta", description = "Desactiva un terapeuta (marca como inactivo)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Terapeuta eliminado exitosamente"),
+            @ApiResponse(responseCode = "204", description = "Terapeuta desactivado"),
             @ApiResponse(responseCode = "404", description = "Terapeuta no encontrado"),
-            @ApiResponse(responseCode = "400", description = "No se puede eliminar porque tiene citas programadas")
+            @ApiResponse(responseCode = "400", description = "No se puede eliminar (tiene citas programadas)")
     })
-    public ResponseEntity<Void> eliminarTerapeuta(
-            @Parameter(description = "ID del terapeuta a eliminar", example = "1", required = true) @PathVariable Long id) {
+    public ResponseEntity<Void> deleteTerapeuta(
+            @Parameter(description = "ID del terapeuta", required = true) @PathVariable Long id) {
         terapeutaService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    private TerapeutaDTO convertirADto(TerapeutaEntity terapeuta) {
+    private TerapeutaDTO convertToDTO(TerapeutaEntity terapeuta) {
         TerapeutaDTO dto = new TerapeutaDTO();
         dto.setIdTerapeuta(terapeuta.getIdTerapeuta());
         dto.setNombre(terapeuta.getNombre());
         dto.setEspecialidad(terapeuta.getEspecialidad());
-        dto.setDisponibilidadTerapeuta(terapeuta.getDisponibilidadTerapeuta().toString());
-
+        dto.setDisponibilidad(terapeuta.getDisponibilidad());
+        dto.setCodigoLicencia(terapeuta.getCodigoLicencia());
+        dto.setTelefono(terapeuta.getTelefono());
+        dto.setCorreo(terapeuta.getCorreo());
+        dto.setActivo(terapeuta.getActivo());
+        
         if (terapeuta.getDisciplina() != null) {
-            dto.setIdDisciplina(terapeuta.getDisciplina().getIdDisciplina());
+            dto.setDisciplinaId(terapeuta.getDisciplina().getIdDisciplina());
             dto.setNombreDisciplina(terapeuta.getDisciplina().getNombre());
         }
-
+        
         return dto;
     }
 
-    private TerapeutaEntity convertirAEntidad(TerapeutaDTO dto) {
+    private TerapeutaEntity convertToEntity(TerapeutaDTO dto) {
         TerapeutaEntity terapeuta = new TerapeutaEntity();
         terapeuta.setNombre(dto.getNombre());
         terapeuta.setEspecialidad(dto.getEspecialidad());
-
-        if (dto.getDisponibilidadTerapeuta() != null) {
-            try {
-                terapeuta.setDisponibilidadTerapeuta(
-                        DisponibilidadTerapeuta.valueOf(dto.getDisponibilidadTerapeuta()));
-            } catch (IllegalArgumentException e) {
-                terapeuta.setDisponibilidadTerapeuta(DisponibilidadTerapeuta.NO_DISPONIBLE);
-            }
-        }
-
-        if (dto.getIdDisciplina() != null) {
+        terapeuta.setDisponibilidad(dto.getDisponibilidad());
+        terapeuta.setCodigoLicencia(dto.getCodigoLicencia());
+        terapeuta.setTelefono(dto.getTelefono());
+        terapeuta.setCorreo(dto.getCorreo());
+        terapeuta.setActivo(dto.getActivo());
+        
+        if (dto.getDisciplinaId() != null) {
             DisciplinaEntity disciplina = new DisciplinaEntity();
-            disciplina.setIdDisciplina(dto.getIdDisciplina());
+            disciplina.setIdDisciplina(dto.getDisciplinaId());
             terapeuta.setDisciplina(disciplina);
         }
-
+        
         return terapeuta;
     }
 }

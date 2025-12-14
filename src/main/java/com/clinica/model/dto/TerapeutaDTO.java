@@ -2,32 +2,44 @@ package com.clinica.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Objeto de Transferencia de Datos para Terapeutas")
+@Schema(description = "DTO para la gestión de terapeutas")
 public class TerapeutaDTO {
     
-    @Schema(description = "ID único del terapeuta", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "ID del terapeuta", example = "1")
     private Long idTerapeuta;
     
-    @Schema(description = "Nombre completo del terapeuta", example = "Dr. Carlos López", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Nombre completo", example = "Dra. María López", required = true)
     private String nombre;
     
-    @Schema(description = "Especialidad del terapeuta", example = "Psicología Clínica")
+    @Schema(description = "Especialidad", example = "Fisioterapia")
     private String especialidad;
     
-    @Schema(description = "Disponibilidad actual del terapeuta", 
-             example = "DISPONIBLE", 
-             allowableValues = {"DISPONIBLE", "OCUPADO", "VACACIONES", "LICENCIA", "NO_DISPONIBLE"})
-    private String disponibilidadTerapeuta;
+    @Schema(description = "Disponibilidad", example = "DISPONIBLE")
+    private String disponibilidad;
     
-    @Schema(description = "ID de la disciplina asociada", example = "1")
-    private Long idDisciplina;
+    @Schema(description = "ID de la disciplina", example = "1")
+    private Long disciplinaId;
     
-    @Schema(description = "Nombre de la disciplina (solo lectura)", example = "Psicología", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Nombre de la disciplina", example = "Fisioterapia")
     private String nombreDisciplina;
+    
+    @Schema(description = "Código de licencia", example = "LIC-12345")
+    private String codigoLicencia;
+    
+    @Schema(description = "Teléfono", example = "+1234567890")
+    private String telefono;
+    
+    @Schema(description = "Correo electrónico", example = "maria@clinica.com")
+    private String correo;
+    
+    @Schema(description = "Activo", example = "true")
+    private Boolean activo;
 }
