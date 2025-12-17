@@ -1,0 +1,50 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://clinica.com/pacientes"
+           targetNamespace="http://clinica.com/pacientes"
+           elementFormDefault="qualified">
+
+    <xs:element name="ConsultarPacienteRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="idPaciente" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ConsultarPacienteResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="paciente" type="tns:Paciente"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ListarPacientesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="activo" type="xs:boolean" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ListarPacientesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="pacientes" type="tns:Paciente" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="Paciente">
+        <xs:sequence>
+            <xs:element name="idPaciente" type="xs:long"/>
+            <xs:element name="nombre" type="xs:string"/>
+            <xs:element name="fechaNacimiento" type="xs:string"/>
+            <xs:element name="nombreTutor" type="xs:string" minOccurs="0"/>
+            <xs:element name="telefono" type="xs:string" minOccurs="0"/>
+            <xs:element name="correo" type="xs:string" minOccurs="0"/>
+            <xs:element name="activo" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

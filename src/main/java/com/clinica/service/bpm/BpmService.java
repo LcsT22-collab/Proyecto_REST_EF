@@ -1,5 +1,6 @@
 package com.clinica.service.bpm;
 
+import com.clinica.esb.EsbService;
 import com.clinica.model.dto.bpm.SolicitudCitaBPM;
 import com.clinica.model.dto.bpm.EventoProcesoBPM;
 import com.clinica.model.entity.CitasEntity;
@@ -25,17 +26,20 @@ public class BpmService {
     private final CitasRepository citasRepository;
     private final PacientesRepository pacientesRepository;
     private final TerapeutasRepository terapeutasRepository;
+    private final EsbService esbService;
 
     public BpmService(JmsTemplate jmsTemplate, 
                      CitaService citaService,
                      CitasRepository citasRepository,
                      PacientesRepository pacientesRepository,
-                     TerapeutasRepository terapeutasRepository) {
+                     TerapeutasRepository terapeutasRepository,
+                     EsbService esbService) {
         this.jmsTemplate = jmsTemplate;
         this.citaService = citaService;
         this.citasRepository = citasRepository;
         this.pacientesRepository = pacientesRepository;
         this.terapeutasRepository = terapeutasRepository;
+        this.esbService = esbService;
     }
 
     public SolicitudCitaBPM iniciarProcesoCita(Long pacienteId, Long terapeutaId, String tipoCita) {
@@ -50,7 +54,8 @@ public class BpmService {
         solicitud.setEstado(EstadoProcesoBPM.SOLICITADO);
         solicitud.setIdTransaccion(UUID.randomUUID().toString());
 
-        jmsTemplate.convertAndSend("bpm.main.queue", solicitud);
+        // Usar ESB para enrutar el mensaje
+        esbService.routeMessage("CITA_NUEVA", solicitud);
         
         registrarEvento(idProceso, "INICIO", "Proceso BPM iniciado para crear cita", solicitud);
         
@@ -105,8 +110,8 @@ public class BpmService {
             
             registrarEvento(solicitud.getIdProceso(), "ERROR", "Error en proceso BPM: " + e.getMessage(), null);
             
-            jmsTemplate.convertAndSend("bpm.compensacion.queue", solicitud);
-            jmsTemplate.convertAndSend("bpm.error.queue", solicitud);
+            // Usar ESB para manejar el flujo alterno de error
+            esbService.handleAlternateFlow(solicitud, e);
         }
     }
 
