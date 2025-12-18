@@ -31,7 +31,10 @@ public class PacienteDTO {
     private String telefono;
     
     @Schema(description = "Correo electrónico", example = "juan@email.com")
-    private String correo;
+    private String email;
+    
+    @Schema(description = "Apellido", example = "Pérez")
+    private String apellido;
     
     @Schema(description = "Dirección", example = "Calle Principal 123")
     private String direccion;

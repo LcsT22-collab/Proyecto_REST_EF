@@ -30,8 +30,20 @@ public class CitaDTO {
     @Schema(description = "Nombre del terapeuta", example = "Dra. María López")
     private String nombreTerapeuta;
     
+    @Schema(description = "Email para validación", example = "paciente@example.com")
+    private String email;
+    
+    @Schema(description = "ID del horario", example = "1")
+    private Long horarioId;
+    
+    @Schema(description = "Motivo de la cita", example = "Consulta general")
+    private String motivo;
+    
     @Schema(description = "Fecha y hora de la cita", example = "2024-12-15T10:00:00", required = true)
     private LocalDateTime fechaCita;
+    
+    @Schema(description = "Fecha y hora de la cita (alias)", example = "2024-12-15T10:00:00")
+    private LocalDateTime fechaHora;
     
     @Schema(description = "Duración en minutos", example = "60")
     private Integer duracionMinutos;
@@ -39,6 +51,6 @@ public class CitaDTO {
     @Schema(description = "Estado de la cita", example = "PROGRAMADA")
     private String estadoCita;
     
-    @Schema(description = "Observaciones", example = "Primera consulta")
-    private String observaciones;
+    @Schema(description = "Estado de la cita (enum)", example = "PENDIENTE")
+    private String estado;
 }

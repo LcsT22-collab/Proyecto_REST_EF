@@ -93,3 +93,6 @@ GET http://localhost:8080/clinica/api/v1/jms/messages?queue=bpm.error.queue&max=
 ## Consola web ActiveMQ
 http://localhost:8161/admin  (admin / admin)
 Revisar colas: bpm.main.queue, bpm.notificaciones.queue, bpm.error.queue, bpm.compensacion.queue
+
+## Diseño del Proceso BPM
+Ver documento detallado: docs/BPM.md

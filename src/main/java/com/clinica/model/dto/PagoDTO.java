@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -25,14 +26,23 @@ public class PagoDTO {
     @Schema(description = "Nombre del paciente", example = "Juan Pérez")
     private String nombrePaciente;
     
+    @Schema(description = "ID de la cita", example = "1")
+    private Long citaId;
+    
     @Schema(description = "Monto del pago", example = "150.00")
     private BigDecimal monto;
     
     @Schema(description = "Fecha de pago", example = "2024-12-01")
     private LocalDate fechaPago;
     
+    @Schema(description = "Fecha y hora de pago", example = "2024-12-01T10:00:00")
+    private LocalDateTime fechaPagoTime;
+    
     @Schema(description = "Estado del pago", example = "PAGADO")
     private String estadoPago;
+    
+    @Schema(description = "Estado del pago (enum)", example = "PENDIENTE")
+    private String estado;
     
     @Schema(description = "Método de pago", example = "TARJETA")
     private String metodoPago;

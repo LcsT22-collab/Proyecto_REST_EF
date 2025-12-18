@@ -19,6 +19,9 @@ public class TerapeutaDTO {
     @Schema(description = "Nombre completo", example = "Dra. María López")
     private String nombre;
     
+    @Schema(description = "Apellido", example = "López")
+    private String apellido;
+    
     @Schema(description = "Especialidad", example = "Fisioterapia")
     private String especialidad;
     
@@ -39,6 +42,9 @@ public class TerapeutaDTO {
     
     @Schema(description = "Correo electrónico", example = "maria@clinica.com")
     private String correo;
+    
+    @Schema(description = "Email", example = "maria@clinica.com")
+    private String email;
     
     @Schema(description = "Activo", example = "true")
     private Boolean activo;

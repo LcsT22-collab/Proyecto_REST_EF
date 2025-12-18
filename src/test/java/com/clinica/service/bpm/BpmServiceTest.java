@@ -94,10 +94,12 @@ class BpmServiceTest {
 
         when(pacientesRepository.existsById(999L)).thenReturn(false);
 
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> {
-            bpmService.procesarSolicitudCita(solicitud);
-        });
+        // Act
+        bpmService.procesarSolicitudCita(solicitud);
+
+        // Assert: servicio maneja el error vía ESB sin propagar excepción
+        assertEquals(EstadoProcesoBPM.ERROR, solicitud.getEstado());
+        verify(esbService, times(1)).handleAlternateFlow(eq(solicitud), any(Exception.class));
     }
 
     @Test
@@ -111,10 +113,12 @@ class BpmServiceTest {
         when(pacientesRepository.existsById(1L)).thenReturn(true);
         when(terapeutasRepository.existsById(999L)).thenReturn(false);
 
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> {
-            bpmService.procesarSolicitudCita(solicitud);
-        });
+        // Act
+        bpmService.procesarSolicitudCita(solicitud);
+
+        // Assert: servicio maneja el error vía ESB sin propagar excepción
+        assertEquals(EstadoProcesoBPM.ERROR, solicitud.getEstado());
+        verify(esbService, times(1)).handleAlternateFlow(eq(solicitud), any(Exception.class));
     }
 
     @Test

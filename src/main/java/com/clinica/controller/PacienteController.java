@@ -1,19 +1,85 @@
 package com.clinica.controller;
 
 import com.clinica.model.dto.PacienteDTO;
-import com.clinica.model.entity.PacientesEntity;
+import com.clinica.model.dto.bpm.ProcessStartRequest;
+import com.clinica.model.dto.bpm.ProcessStartResponse;
 import com.clinica.service.PacienteService;
+import com.clinica.service.bpm.BpmProcessService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/v1/pacientes")
+@Tag(name = "Pacientes", description = "Gestión de pacientes con BPMN")
+@Slf4j
+public class PacienteController {
+    
+    private final PacienteService pacienteService;
+    private final BpmProcessService bpmProcessService;
+    
+    public PacienteController(PacienteService pacienteService, BpmProcessService bpmProcessService) {
+        this.pacienteService = pacienteService;
+        this.bpmProcessService = bpmProcessService;
+    }
+    
+    @PostMapping
+    @Operation(summary = "Crear paciente", description = "Crea un nuevo paciente disparando el proceso BPMN GestionPacientes")
+    public ResponseEntity<ProcessStartResponse> crearPaciente(@RequestBody PacienteDTO pacienteDTO) {
+        log.info("POST /api/v1/pacientes - Creando paciente: {}", pacienteDTO.getNombre());
+        try {
+            // Preparar variables para el proceso BPMN
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("nombre", pacienteDTO.getNombre());
+            variables.put("apellido", pacienteDTO.getApellido());
+            variables.put("email", pacienteDTO.getEmail());
+            variables.put("telefono", pacienteDTO.getTelefono());
+            
+            ProcessStartRequest request = new ProcessStartRequest();
+            request.setProcessId("GestionPacientes");
+            request.setVariables(variables);
+            
+            ProcessStartResponse response = bpmProcessService.startProcess(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error al crear paciente", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    @GetMapping
+    @Operation(summary = "Listar todos los pacientes")
+    public ResponseEntity<List<PacienteDTO>> listarPacientes() {
+        return ResponseEntity.ok(pacienteService.obtenerTodosLosPacientes());
+    }
+    
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtener paciente por ID")
+    public ResponseEntity<PacienteDTO> obtenerPaciente(@PathVariable Long id) {
+        return ResponseEntity.ok(pacienteService.obtenerPacientePorId(id));
+    }
+    
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar paciente")
+    public ResponseEntity<PacienteDTO> actualizarPaciente(@PathVariable Long id, @RequestBody PacienteDTO pacienteDTO) {
+        return ResponseEntity.ok(pacienteService.actualizarPaciente(id, pacienteDTO));
+    }
+    
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar paciente")
+    public ResponseEntity<Void> eliminarPaciente(@PathVariable Long id) {
+        pacienteService.eliminarPaciente(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+
 
 @RestController
 @RequestMapping("/api/v1/pacientes")
