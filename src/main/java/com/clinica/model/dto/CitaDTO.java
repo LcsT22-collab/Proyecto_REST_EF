@@ -18,7 +18,7 @@ public class CitaDTO {
     @Schema(description = "ID de la cita", example = "1")
     private Long idCita;
     
-    @Schema(description = "ID del paciente", example = "1", required = true)
+    @Schema(description = "ID del paciente", example = "1")
     private Long pacienteId;
     
     @Schema(description = "Nombre del paciente", example = "Juan Pérez")

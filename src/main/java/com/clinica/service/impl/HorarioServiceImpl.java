@@ -8,7 +8,6 @@ import com.clinica.service.HorarioService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,8 +30,9 @@ public class HorarioServiceImpl implements HorarioService {
     }
 
     @Override
-    public Optional<HorarioEntity> findById(Long id) {
-        return horarioRepository.findById(id);
+    public Optional<HorarioEntity> findById(Long id) {        if (id == null) {
+            return Optional.empty();
+        }        return horarioRepository.findById(id);
     }
 
     @Override

@@ -26,8 +26,9 @@ public class PacienteServiceImpl implements PacienteService {
     }
 
     @Override
-    public Optional<PacientesEntity> findById(Long id) {
-        return pacientesRepository.findById(id);
+    public Optional<PacientesEntity> findById(Long id) {        if (id == null) {
+            return Optional.empty();
+        }        return pacientesRepository.findById(id);
     }
 
     @Override

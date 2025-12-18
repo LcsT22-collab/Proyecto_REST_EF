@@ -18,16 +18,16 @@ public class EvaluacionDTO {
     @Schema(description = "ID de la evaluación", example = "1")
     private Long idEvaluaciones;
     
-    @Schema(description = "ID del paciente", example = "1", required = true)
+    @Schema(description = "ID del paciente", example = "1")
     private Long pacienteId;
     
     @Schema(description = "Nombre del paciente", example = "Juan Pérez")
     private String nombrePaciente;
     
-    @Schema(description = "Fecha de evaluación", example = "2024-12-01", required = true)
+    @Schema(description = "Fecha de evaluación", example = "2024-12-01")
     private LocalDate fechaEvaluacion;
     
-    @Schema(description = "Tipo de evaluación", example = "Evaluación Inicial", required = true)
+    @Schema(description = "Tipo de evaluación", example = "Evaluación Inicial")
     private String tipoEvaluacion;
     
     @Schema(description = "Resultados", example = "Paciente presenta...")

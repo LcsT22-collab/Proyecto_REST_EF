@@ -23,20 +23,17 @@ public class BpmService {
 
     private final JmsTemplate jmsTemplate;
     private final CitaService citaService;
-    private final CitasRepository citasRepository;
     private final PacientesRepository pacientesRepository;
     private final TerapeutasRepository terapeutasRepository;
     private final EsbService esbService;
 
     public BpmService(JmsTemplate jmsTemplate, 
                      CitaService citaService,
-                     CitasRepository citasRepository,
                      PacientesRepository pacientesRepository,
                      TerapeutasRepository terapeutasRepository,
                      EsbService esbService) {
         this.jmsTemplate = jmsTemplate;
         this.citaService = citaService;
-        this.citasRepository = citasRepository;
         this.pacientesRepository = pacientesRepository;
         this.terapeutasRepository = terapeutasRepository;
         this.esbService = esbService;
@@ -139,7 +136,7 @@ public class BpmService {
             throw new RuntimeException("Paciente no encontrado: " + solicitud.getPacienteId());
         }
         
-        boolean terapeutaExiste = terapeutasRepository.existsById(solicitud.getTerapeutaId());
+        boolean terapeutaExiste = solicitud.getTerapeutaId() != null && terapeutasRepository.existsById(solicitud.getTerapeutaId());
         if (!terapeutaExiste) {
             throw new RuntimeException("Terapeuta no encontrado: " + solicitud.getTerapeutaId());
         }

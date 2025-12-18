@@ -26,8 +26,9 @@ public class DisciplinaServiceImpl implements DisciplinaService {
     }
 
     @Override
-    public Optional<DisciplinaEntity> findById(Long id) {
-        return disciplinaRepository.findById(id);
+    public Optional<DisciplinaEntity> findById(Long id) {        if (id == null) {
+            return Optional.empty();
+        }        return disciplinaRepository.findById(id);
     }
 
     @Override

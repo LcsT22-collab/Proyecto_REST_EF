@@ -16,7 +16,7 @@ public class TerapeutaDTO {
     @Schema(description = "ID del terapeuta", example = "1")
     private Long idTerapeuta;
     
-    @Schema(description = "Nombre completo", example = "Dra. María López", required = true)
+    @Schema(description = "Nombre completo", example = "Dra. María López")
     private String nombre;
     
     @Schema(description = "Especialidad", example = "Fisioterapia")

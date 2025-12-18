@@ -18,7 +18,7 @@ public class DisciplinaDTO {
     @Schema(description = "ID de la disciplina", example = "1")
     private Long idDisciplina;
     
-    @Schema(description = "Nombre de la disciplina", example = "Fisioterapia", required = true)
+    @Schema(description = "Nombre de la disciplina", example = "Fisioterapia")
     private String nombre;
     
     @Schema(description = "Descripción", example = "Terapia física para rehabilitación")

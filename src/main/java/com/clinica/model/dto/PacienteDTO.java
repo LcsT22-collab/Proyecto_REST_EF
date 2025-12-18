@@ -18,10 +18,10 @@ public class PacienteDTO {
     @Schema(description = "ID del paciente", example = "1")
     private Long idPaciente;
     
-    @Schema(description = "Nombre completo", example = "Juan Pérez", required = true)
+@Schema(description = "Nombre completo", example = "Juan Pérez")
     private String nombre;
-    
-    @Schema(description = "Fecha de nacimiento", example = "1990-05-15", required = true)
+
+    @Schema(description = "Fecha de nacimiento", example = "1990-05-15")
     private LocalDate fechaNacimiento;
     
     @Schema(description = "Nombre del tutor", example = "María Pérez")

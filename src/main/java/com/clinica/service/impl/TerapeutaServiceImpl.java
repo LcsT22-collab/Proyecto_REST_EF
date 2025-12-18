@@ -34,8 +34,9 @@ public class TerapeutaServiceImpl implements TerapeutaService {
     }
 
     @Override
-    public Optional<TerapeutaEntity> findById(Long id) {
-        return terapeutasRepository.findById(id);
+    public Optional<TerapeutaEntity> findById(Long id) {        if (id == null) {
+            return Optional.empty();
+        }        return terapeutasRepository.findById(id);
     }
 
     @Override

@@ -19,16 +19,16 @@ public class PagoDTO {
     @Schema(description = "ID del pago", example = "1")
     private Long idPago;
     
-    @Schema(description = "ID del paciente", example = "1", required = true)
+    @Schema(description = "ID del paciente", example = "1")
     private Long pacienteId;
     
     @Schema(description = "Nombre del paciente", example = "Juan Pérez")
     private String nombrePaciente;
     
-    @Schema(description = "Monto del pago", example = "150.00", required = true)
+    @Schema(description = "Monto del pago", example = "150.00")
     private BigDecimal monto;
     
-    @Schema(description = "Fecha de pago", example = "2024-12-01", required = true)
+    @Schema(description = "Fecha de pago", example = "2024-12-01")
     private LocalDate fechaPago;
     
     @Schema(description = "Estado del pago", example = "PAGADO")

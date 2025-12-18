@@ -30,8 +30,9 @@ public class EvaluacionServiceImpl implements EvaluacionService {
     }
 
     @Override
-    public Optional<EvaluacionesEntity> findById(Long id) {
-        return evaluacionesRepository.findById(id);
+    public Optional<EvaluacionesEntity> findById(Long id) {        if (id == null) {
+            return Optional.empty();
+        }        return evaluacionesRepository.findById(id);
     }
 
     @Override
