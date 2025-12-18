@@ -8,10 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-/**
- * Enterprise Service Bus - Componente de integración centralizado
- * Orquesta la comunicación entre diferentes servicios y gestiona el enrutamiento de mensajes
- */
 @Service
 @Slf4j
 public class EsbService {
@@ -22,9 +18,7 @@ public class EsbService {
         this.jmsTemplate = jmsTemplate;
     }
 
-    /**
-     * Enruta un mensaje al destino apropiado según el tipo de evento
-     */
+   
     public void routeMessage(String eventType, Object payload) {
         log.info("ESB - Enrutando mensaje de tipo: {}", eventType);
         
