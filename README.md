@@ -4,12 +4,16 @@
 cd c:\Users\Angelo\Desktop\EF-CHE
 mvnw.cmd spring-boot:run
 
-## Swagger
+# Ver Swagger UI (docs)
 http://localhost:8080/clinica/swagger-ui.html
 
-## Actuator (health/info)
+# Ver health
 http://localhost:8080/clinica/actuator/health
 http://localhost:8080/clinica/actuator/info
+
+
+# Probar un endpoint (GET vacío sin datos)
+http://localhost:8080/clinica/api/v1/pacientes
 
 ## JSON de ejemplo
 Paciente:
